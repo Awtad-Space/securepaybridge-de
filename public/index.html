@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Form -->
+        <div id="loginForm" class="container">
+            <div class="card">
+                <h2>License Manager Login</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <div id="loginError" class="error" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="container" style="display: none;">
+            <header>
+                <h1>License Manager Dashboard</h1>
+                <div class="header-actions">
+                    <button id="addLicenseBtn" class="btn-primary">Add License</button>
+                    <button id="logoutBtn" class="btn-secondary">Logout</button>
+                </div>
+            </header>
+
+            <div class="tabs">
+                <button class="tab-button active" data-tab="licenses">Licenses</button>
+                <button class="tab-button" data-tab="verify">Verify License</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- Licenses Tab -->
+            <div id="licensesTab" class="tab-content active">
+                <div class="table-container">
+                    <table id="licensesTable">
+                        <thead>
+                            <tr>
+                                <th>License Key</th>
+                                <th>Product</th>
+                                <th>Customer Email</th>
+                                <th>Customer Name</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Verify License Tab -->
+            <div id="verifyTab" class="tab-content">
+                <div class="card">
+                    <h3>Verify License</h3>
+                    <form id="verifyForm">
+                        <div class="form-group">
+                            <label for="verifyLicenseKey">License Key:</label>
+                            <input type="text" id="verifyLicenseKey" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="verifyProductName">Product Name:</label>
+                            <input type="text" id="verifyProductName" required>
+                        </div>
+                        <button type="submit">Verify License</button>
+                    </form>
+                    <div id="verifyResult" class="result" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content">
+                <div class="card">
+                    <h3>Settings</h3>
+                    <div id="settingsContent">
+                        <p>Settings functionality coming soon...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit License Modal -->
+        <div id="licenseModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3 id="modalTitle">Add License</h3>
+                <form id="licenseForm">
+                    <input type="hidden" id="licenseId">
+                    <div class="form-group">
+                        <label for="licenseKey">License Key:</label>
+                        <input type="text" id="licenseKey" required>
+                        <button type="button" id="generateKeyBtn">Generate Key</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Customer Email:</label>
+                        <input type="email" id="customerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerName">Customer Name:</label>
+                        <input type="text" id="customerName">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date:</label>
+                        <input type="date" id="expiryDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save License</button>
+                        <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
