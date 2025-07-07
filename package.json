@@ -1,21 +1,19 @@
 {
-  "name": "php-license-manager",
+  "name": "license-manager",
   "version": "1.0.0",
-  "description": "Simple PHP License Manager",
+  "description": "License Management System",
+  "main": "server.js",
   "scripts": {
-    "start": "php -S 0.0.0.0:${PORT:-3000} -t .",
-    "initdb": "node init_db_node.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.0.1",
-    "express": "^5.1.0",
-    "express-rate-limit": "^7.5.1",
-    "multer": "^2.0.1",
-    "sqlite3": "^5.1.7"
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "body-parser": "^1.20.2",
+    "express-session": "^1.17.3",
+    "bcryptjs": "^2.4.3",
+    "multer": "^1.4.5-lts.1",
+    "express-rate-limit": "^6.7.0"
   }
 }
