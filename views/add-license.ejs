@@ -1,0 +1,68 @@
+<%- include('layout', { title: editMode ? 'Edit License' : 'Add New License', user: 'Admin', body: `
+${typeof error !== 'undefined' && error ? `<div class="message error-message">${error}<span class="close-message">&times;</span></div>` : ''}
+
+<form method="POST" action="/add-license" class="styled-form">
+    <input type="hidden" name="csrf_token" value="${csrfToken}">
+    
+    <div class="form-group">
+        <label for="domain">🌐 Primary Domain</label>
+        <input type="text" id="domain" name="domain" placeholder="e.g., client.com" required 
+               value="${license ? license.domain || '' : ''}">
+        <small>Unique primary identifier for the license</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="secondary_domain">🔗 Secondary Domain (Optional)</label>
+        <input type="text" id="secondary_domain" name="secondary_domain" placeholder="e.g., staging.client.com"
+               value="${license ? license.secondary_domain || '' : ''}">
+        <small>An alternative domain where this license can also be validated</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="client_name">👤 Client Name</label>
+        <input type="text" id="client_name" name="client_name" placeholder="Client Company or Name" required
+               value="${license ? license.client_name || '' : ''}">
+    </div>
+    
+    <div class="form-group">
+        <label for="email">📧 Email (Optional)</label>
+        <input type="email" id="email" name="email" placeholder="client@example.com"
+               value="${license ? license.email || '' : ''}">
+    </div>
+    
+    <div class="form-group">
+        <label for="license_type">🎫 License Type</label>
+        <select id="license_type" name="license_type">
+            <option value="Trial" ${!license || license.license_type === 'Trial' ? 'selected' : ''}>Trial</option>
+            <option value="Monthly" ${license && license.license_type === 'Monthly' ? 'selected' : ''}>Monthly</option>
+            <option value="Yearly" ${license && license.license_type === 'Yearly' ? 'selected' : ''}>Yearly</option>
+            <option value="Lifetime" ${license && license.license_type === 'Lifetime' ? 'selected' : ''}>Lifetime</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="expires_at">📅 Expiration Date</label>
+        <input type="date" id="expires_at" name="expires_at" 
+               value="${license ? license.expires_at || '' : ''}">
+        <small>Leave blank for no expiration</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="site_limit">🌍 Site Limit</label>
+        <select id="site_limit" name="site_limit">
+            <option value="Single" ${!license || license.site_limit === 'Single' ? 'selected' : ''}>Single Site</option>
+            <option value="Unlimited" ${license && license.site_limit === 'Unlimited' ? 'selected' : ''}>Unlimited Sites</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="status">⚙️ Status</label>
+        <select id="status" name="status">
+            <option value="active" ${license && license.status === 'active' ? 'selected' : ''}>Active</option>
+            <option value="inactive" ${!license || license.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">💾 ${editMode ? 'Update' : 'Save'} License</button>
+</form>
+` }) %>

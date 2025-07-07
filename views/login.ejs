@@ -1,0 +1,26 @@
+<%- include('layout', { title: 'Admin Login', user: null, body: `
+<div class="container login-container">
+    <header class="login-header">
+        <h1>Admin Login</h1>
+    </header>
+    <main>
+        ${error ? `<div class="message error-message">${error}<span class="close-message">&times;</span></div>` : ''}
+        
+        <form method="POST" action="/login" class="login-form">
+            <input type="hidden" name="csrf_token" value="${csrfToken}">
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </main>
+</div>
+` }) %>

@@ -1,0 +1,63 @@
+<%- include('layout', { title: 'View Licenses', user: 'Admin', body: `
+<form method="GET" action="/licenses" class="search-container">
+    <input type="text" class="search-input" name="search" placeholder="Search by domain, name, or email..." value="${search}">
+    <button type="submit" class="btn btn-search">🔍 Search</button>
+    ${search ? '<a href="/licenses" class="btn btn-secondary">Clear</a>' : ''}
+</form>
+
+<div class="table-responsive">
+    <table class="sortable-table">
+        <thead>
+            <tr>
+                <th>🌐 Primary Domain</th>
+                <th>🔗 Secondary Domain</th>
+                <th>👤 Name</th>
+                <th>📧 Email</th>
+                <th>🔑 Key</th>
+                <th>🧪 Token</th>
+                <th>🎫 Type</th>
+                <th>🌍 Limit</th>
+                <th>📅 Expiry</th>
+                <th>⚙️ Status</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${licenses.length === 0 ? 
+                '<tr><td colspan="11" style="text-align: center; padding: 20px;">No licenses found.</td></tr>' :
+                licenses.map(license => `
+                    <tr>
+                        <td>${license.domain}</td>
+                        <td>${license.secondary_domain || '-'}</td>
+                        <td>${license.client_name}</td>
+                        <td>${license.email || '-'}</td>
+                        <td class="code">${license.license_key}</td>
+                        <td class="code">${license.token}</td>
+                        <td>${license.license_type}</td>
+                        <td>${license.site_limit}</td>
+                        <td>${license.expires_at ? new Date(license.expires_at).toLocaleDateString() : (license.license_type === 'Lifetime' ? 'Lifetime' : 'N/A')}</td>
+                        <td><span class="status-${license.status}">${license.status.charAt(0).toUpperCase() + license.status.slice(1)}</span></td>
+                        <td>${license.created_at ? new Date(license.created_at).toLocaleDateString() : '-'}</td>
+                    </tr>
+                `).join('')
+            }
+        </tbody>
+    </table>
+</div>
+
+${totalPages > 1 ? `
+<nav class="pagination">
+    ${currentPage > 1 ? `<a href="/licenses?page=${currentPage - 1}${search ? '&search=' + encodeURIComponent(search) : ''}" class="page-link">Previous</a>` : ''}
+    
+    ${Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+        const page = i + Math.max(1, currentPage - 2);
+        return page <= totalPages ? `
+            <a href="/licenses?page=${page}${search ? '&search=' + encodeURIComponent(search) : ''}" 
+               class="page-link ${page === currentPage ? 'active' : ''}">${page}</a>
+        ` : '';
+    }).join('')}
+    
+    ${currentPage < totalPages ? `<a href="/licenses?page=${currentPage + 1}${search ? '&search=' + encodeURIComponent(search) : ''}" class="page-link">Next</a>` : ''}
+</nav>
+` : ''}
+` }) %>
