@@ -208,13 +208,23 @@
                 } else {
                     // No update available (current version is >= latest uploaded version)
                     error_log("[update-check - No License Check] No Update Needed for $slug. Current: $version, Latest: {$requested_plugin_data->new_version}. Sending 'false'.");
-                    send_json_response(false);
+                    send_json_response([
+					'license_status' => $license_status,
+					'update_available' => false,
+					'current_version' => $version
+					]);
+
                 }
             } else {
                 // No update file found on server
                 error_log("[update-check - No License Check] Update Check Failed for $slug. No update file found. Sending 'false'.");
                 log_activity($db, 'UPDATE_CHECK_NO_FILE', "Slug: $slug, Domain: $domain (Info Only), File Found: No"); // Log file not found
-                send_json_response(false);
+                send_json_response([
+				'license_status' => $license_status,
+				'update_available' => false,
+				'current_version' => $version
+			]);
+
             }
 
         } elseif ($action === 'plugin_information') {
