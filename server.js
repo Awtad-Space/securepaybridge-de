@@ -69,11 +69,22 @@ function initDatabase() {
 
         // Create default admin user if not exists
         db.get("SELECT * FROM users WHERE username = 'admin'", (err, row) => {
+            if (err) {
+                console.error('Error checking for admin user:', err);
+                return;
+            }
             if (!row) {
                 const hashedPassword = bcrypt.hashSync('admin123', 10);
                 db.run("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", 
-                    ['admin', hashedPassword, 'admin']);
-                console.log('Default admin user created: admin/admin123');
+                    ['admin', hashedPassword, 'admin'], function(err) {
+                        if (err) {
+                            console.error('Error creating admin user:', err);
+                        } else {
+                            console.log('Default admin user created: admin/admin123');
+                        }
+                    });
+            } else {
+                console.log('Admin user already exists');
             }
         });
     });
@@ -136,19 +147,67 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     
+    console.log('Login attempt:', { username, password: '***' });
+    
     db.get("SELECT * FROM users WHERE username = ?", [username], (err, user) => {
         if (err) {
+            console.error('Database error during login:', err);
             res.status(500).send('Database error');
             return;
         }
         
-        if (user && bcrypt.compareSync(password, user.password)) {
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            req.session.userRole = user.role;
-            res.redirect('/dashboard');
+        console.log('User found:', user ? 'Yes' : 'No');
+        
+        if (user) {
+            console.log('Comparing passwords...');
+            const passwordMatch = bcrypt.compareSync(password, user.password);
+            console.log('Password match:', passwordMatch);
+            
+            if (passwordMatch) {
+                req.session.userId = user.id;
+                req.session.username = user.username;
+                req.session.userRole = user.role;
+                console.log('Login successful, redirecting to dashboard');
+                res.redirect('/dashboard');
+            } else {
+                console.log('Password mismatch');
+                res.send(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Login Failed</title>
+                        <link rel="stylesheet" href="/style.css">
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="alert alert-error">
+                                Invalid credentials. Please check your username and password.
+                            </div>
+                            <a href="/login" class="btn">Try again</a>
+                        </div>
+                    </body>
+                    </html>
+                `);
+            }
         } else {
-            res.send('Invalid credentials. <a href="/login">Try again</a>');
+            console.log('User not found');
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Login Failed</title>
+                    <link rel="stylesheet" href="/style.css">
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="alert alert-error">
+                            User not found. Please check your username.
+                        </div>
+                        <a href="/login" class="btn">Try again</a>
+                    </div>
+                </body>
+                </html>
+            `);
         }
     });
 });
@@ -354,8 +413,21 @@ app.post('/api/validate-license', (req, res) => {
 // Initialize database and start server
 initDatabase();
 
+// Add a route to reset admin password for debugging
+app.get('/reset-admin', (req, res) => {
+    const hashedPassword = bcrypt.hashSync('admin123', 10);
+    db.run("UPDATE users SET password = ? WHERE username = 'admin'", [hashedPassword], function(err) {
+        if (err) {
+            res.send('Error resetting password: ' + err.message);
+        } else {
+            res.send('Admin password reset to: admin123');
+        }
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`License Manager running on port ${PORT}`);
     console.log(`Access the application at http://localhost:${PORT}`);
     console.log('Default admin credentials: admin/admin123');
+    console.log('If login fails, visit /reset-admin to reset the password');
 });
